@@ -17,7 +17,7 @@ These services form the foundational backend of our ride-sharing application, de
 
 ## 🏗️ Architecture Highlights
 
-🧱 System Overview
+### 🧱 System Overview
 
 Our system consists of several independently scalable microservices:
 
@@ -128,90 +128,162 @@ Ensure MongoDB and Redis are running locally or update their connection URIs in 
 
 ```
 ride-sharing-platform/
-├── user-service/
-│   ├── main.py
-│   └── routers/
-│       └── user.py
-│   └── services/
-│       ├── db.py
-│       ├── cache.py
-│       └── auth.py
-│
 ├── ride-service/
-│   ├── main.py
-│   └── routers/
-│       └── ride.py
-│   └── services/
-│       ├── db.py
-│       ├── cache.py
-│       └── auth.py
+│   ├── main.py                    # Entry point for ride service
+│   ├── README.md                  # Ride service documentation
+│   ├── redis_cache.py             # Redis cache logic
+│   ├── services/
+│   │   └── mongodb.py             # MongoDB connection logic
+│   └── __pycache__/               # Compiled Python bytecode
+│       ├── main.cpython-310.pyc
+│       └── redis_cache.cpython-310.pyc
 │
-├── payment-service/
-│   ├── main.py
-│   └── routers/
-│       └── payment.py
-│   └── services/
-│       ├── db.py
-│       ├── cache.py
-│       └── auth.py
+├── user-service/
+│   ├── Dockerfile                 # Docker config for user service
+│   └── main.py                    # Entry point for user service
 │
-├── redis_cache.py
-├── docker-compose.yml
-└── README.md
+├── docker-compose.yml             # Docker Compose configuration
+├── README.md                      # Project documentation
+└── desktop.ini                    # Local fallback config (used if Docker fails to run)
 ```
 
 ---
+## 🔑 API Endpoints
+### User Service (http://localhost:8001)
+| Method | Endpoint           | Description           |
+| ------ | ------------------ | --------------------- |
+| POST   | `/users`           | Register a new user   |
+| GET    | `/users/{user_id}` | Retrieve user details |
 
-## 🧪 Example Cache Usage
+Example Request:
+```bash
+curl -X POST http://localhost:8001/users \
+  -H "Content-Type: application/json" \
+  -d '{"id": "u001", "name": "Kevin", "role": "rider"}'
+```
 
-Redis is used to store recent queries (e.g., ride status). The `redis_cache.py` file contains utility functions:
+### 🚕 Ride Service (http://localhost:8002)
+| Method | Endpoint           | Description               |
+| ------ | ------------------ | ------------------------- |
+| POST   | `/rides`           | Create a new ride         |
+| GET    | `/rides/{ride_id}` | Retrieve ride information |
 
+Example Request:
+```bash
+curl -X POST http://localhost:8002/rides \
+  -H "Content-Type: application/json" \
+  -d '{"id": "r123", "driver": "Dewi", "status": "pending"}'
+```
+📌 All endpoints return JSON responses and leverage Redis caching for fast repeat lookups.
+
+---
+
+## 🧠 Redis Caching
+To optimize performance and reduce database load, Redis is used as a caching layer across both the **User Service** and **Ride Service**.
+
+✅ How It Works
+- When a user or ride is retrieved, the service first checks Redis for cached data.
+- If the data exists in Redis:
+  - It returns immediately (faster than querying MongoDB)
+  - A message is logged to indicate a cache hit
+- If the data is not in cache, it is fetched from MongoDB and then stored in Redis for future   requests.
+
+### 🧾 Cache Utility – redis_cache.py
 ```python
-# redis_cache.py
+import redis, json
 
-import redis
-import json
-
-redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
-CACHE_TTL = 300  # seconds
+redis_client = redis.Redis(host="redis", port=6379, decode_responses=True)
+CACHE_TTL = 300  # cache timeout in seconds (5 minutes)
 
 def get_from_cache(key: str):
     value = redis_client.get(key)
-    if value:
-        return json.loads(value)
-    return None
+    return json.loads(value) if value else None
 
 def set_cache(key: str, value: dict, ttl: int = CACHE_TTL):
+    print(f"SET CACHE: {key} = {value}")
     redis_client.set(key, json.dumps(value), ex=ttl)
 ```
 
----
-
-## 📸 Screenshots
-
-> _(Optional: Add screenshots of API testing or Postman results here if desired)_
+### 💡 Example Keys
+- user:u001 → Cached user with ID u001
+- ride:r123 → Cached ride with ID r123
+  
+This design helps the app scale better under load by avoiding repeated database queries for frequently accessed resources.
 
 ---
 
 ## 📈 Future Improvements
+While the current implementation provides a functional microservice-based ride-hailing backend, several improvements are planned to make the system more robust, secure, and production-ready:
 
-- Add authentication tokens using JWT
-- API Gateway for unified routing
-- Frontend dashboard using React.js
-- Integration with real payment API (e.g., Stripe)
+🧱 Backend Improvements
+- Replace in-memory mock DBs with full MongoDB schemas and validations
+- Add proper indexing for faster ride/user lookup
+- Support pagination and filtering in GET endpoints
+
+🔐 Security & Authentication
+- Implement JWT-based authentication for users
+- Add role-based access control (e.g., rider vs driver vs admin)
+- Secure endpoints with middleware and token verification
+
+💸 Payment Service
+- Add a dedicated payment microservice
+- Simulate payment confirmation and store transactions in PostgreSQL
+- Handle payment status updates on ride completion
+
+🌐 API Gateway
+- Introduce an API gateway (e.g., Traefik or NGINX) for unified routing
+- Add logging, throttling, and centralized auth handling
+
+📊 Monitoring & DevOps
+- Integrate Prometheus + Grafana for service-level monitoring
+- Add structured logging and tracing (e.g., OpenTelemetry)
+- Add CI/CD pipelines using GitHub Actions or GitLab CI
+
+💻 Frontend Application
+- Build a simple frontend in React or Flutter
+- Enable users to register, request rides, and track their history
+- Provide a responsive mobile-friendly UI
 
 ---
 
 ## 📚 References
 
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Docker Documentation](https://docs.docker.com/)
-- [Redis Documentation](https://redis.io/)
-- [PostgreSQL Documentation](https://www.postgresql.org/)
-- [MongoDB Documentation](https://www.mongodb.com/docs/)
+- FastAPI Documentation: https://fastapi.tiangolo.com/
+- MongoDB Documentation: https://www.mongodb.com/docs/
+- Redis Documentation: https://redis.io/docs/
+- Docker Documentation: https://docs.docker.com/
+- Uvicorn Documentation: https://www.uvicorn.org/
+- Pydantic Documentation: https://docs.pydantic.dev/
+- Motor (Async MongoDB Driver): https://motor.readthedocs.io/
 
 ---
 
-## 📝 License
+## 💻 Development Experience
+✅ What We Learned
+- **Microservices Architecture**
+  Learned to design independent, modular services with clearly defined responsibilities and communication via REST APIs.
+- **FastAPI for Rapid API Development**
+  Used FastAPI to quickly build asynchronous APIs with automatic validation and documentation.
+- **Redis Caching Principles**
+  Integrated Redis to reduce database load and improve performance for repeat queries.
+- **MongoDB & Async Operations with Motor**
+  Used Motor (async MongoDB driver) to support non-blocking data access in Python services.
+- **Containerization with Docker**
+  Containerized all services for easier orchestration, environment consistency, and testing.
 
-MIT License © 2025 – Ride Sharing Team
+**Real Challenges We Faced**
+- **Service Dependency Order**
+  Some services failed to start because Redis or MongoDB weren’t ready yet. We solved this using `depends_on` and retry logic.
+- **Async DB Handling**
+  Using Motor required changing how we read/write data. Handling `_id` fields and async logic was tricky at first.
+- **Redis Serialization**
+  Redis stores only strings, so we had to manually `json.dumps()` data before storing and `json.loads()` when retrieving.
+- **In-Memory vs Persistent State**
+  Initially used fake dictionaries to simulate databases. Switching to MongoDB solved issues with data persistence after restarts.
+- **Cache Expiry Strategy**
+  Choosing TTL values and invalidation logic for cached objects like users and rides required thoughtful balancing.
+- **REST API Design**
+  Ensured all endpoints followed consistent naming, request/response formats, and proper status code usage.
+  
+Build using SCALABLE Microservices Architecture 
+© 2025 – Ride Sharing Team
