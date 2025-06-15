@@ -245,19 +245,6 @@ While the current implementation provides a functional microservice-based ride-h
 - Provide a responsive mobile-friendly UI
 
 ---
-
-## 📚 References
-
-- FastAPI Documentation: https://fastapi.tiangolo.com/
-- MongoDB Documentation: https://www.mongodb.com/docs/
-- Redis Documentation: https://redis.io/docs/
-- Docker Documentation: https://docs.docker.com/
-- Uvicorn Documentation: https://www.uvicorn.org/
-- Pydantic Documentation: https://docs.pydantic.dev/
-- Motor (Async MongoDB Driver): https://motor.readthedocs.io/
-
----
-
 ## 💻 Development Experience
 ✅ What We Learned
 - **Microservices Architecture**
@@ -284,6 +271,20 @@ While the current implementation provides a functional microservice-based ride-h
   Choosing TTL values and invalidation logic for cached objects like users and rides required thoughtful balancing.
 - **REST API Design**
   Ensured all endpoints followed consistent naming, request/response formats, and proper status code usage.
+
+---
+
+## 📚 References
+
+- FastAPI Documentation: https://fastapi.tiangolo.com/
+- MongoDB Documentation: https://www.mongodb.com/docs/
+- Redis Documentation: https://redis.io/docs/
+- Docker Documentation: https://docs.docker.com/
+- Uvicorn Documentation: https://www.uvicorn.org/
+- Pydantic Documentation: https://docs.pydantic.dev/
+- Motor (Async MongoDB Driver): https://motor.readthedocs.io/
+
+---
   
 Build using SCALABLE Microservices Architecture 
 © 2025 – Ride Sharing Team
