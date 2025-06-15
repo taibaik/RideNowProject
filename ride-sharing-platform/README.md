@@ -216,7 +216,6 @@ This design helps the app scale better under load by avoiding repeated database 
 While the current implementation provides a functional microservice-based ride-hailing backend, several improvements are planned to make the system more robust, secure, and production-ready:
 
 🧱 Backend Improvements
-- Replace in-memory mock DBs with full MongoDB schemas and validations
 - Add proper indexing for faster ride/user lookup
 - Support pagination and filtering in GET endpoints
 
