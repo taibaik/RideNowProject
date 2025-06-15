@@ -91,25 +91,38 @@ Expected running services:
 ### 4. Test Services (Example with HTTPie or Curl)
 Once the services are up, test endpoints using curl, httpie, or Postman.
 
+#### Create a user
 ```bash
-# Create a user
 curl -X POST http://localhost:8001/users \
   -H "Content-Type: application/json" \
   -d '{"id": "u001", "name": "Kevin", "role": "rider"}'
+```
 
-# Get a user
+#### Get a user
+```bash
 curl http://localhost:8001/users/u001
+```
 
-# Create a ride
+#### Create a ride
+```bash
 curl -X POST http://localhost:8002/rides \
   -H "Content-Type: application/json" \
   -d '{"id": "r123", "driver": "Dewi", "status": "pending"}'
+```
 
-# Get a ride
+#### Get a ride
+```bash
 curl http://localhost:8002/rides/r123
 ```
 
----
+### 5. (Optional) 🛠️ Manual Dev Mode 
+To run a service manually (without Docker):
+
+```bash
+cd user-service  # or ride-service
+uvicorn main:app --reload --port 8001  # or 8002 for Ride
+```
+Ensure MongoDB and Redis are running locally or update their connection URIs in the code.
 
 ## 📁 Project Structure
 
