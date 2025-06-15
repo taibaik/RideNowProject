@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  ride-service:
+    build:
+      context: ./ride-service
+    ports:
+      - "8002:8000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+    depends_on:
+      - mongodb
+      - redis
+
+  user-service:
+    build:
+      context: ./user-service
+    ports:
+      - "8001:8000"
+    depends_on:
+      - redis
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo_data:
