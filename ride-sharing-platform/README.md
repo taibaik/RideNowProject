@@ -130,7 +130,6 @@ Ensure MongoDB and Redis are running locally or update their connection URIs in 
 ride-sharing-platform/
 ├── ride-service/
 │   ├── main.py                    # Entry point for ride service
-│   ├── README.md                  # Ride service documentation
 │   ├── redis_cache.py             # Redis cache logic
 │   ├── services/
 │   │   └── mongodb.py             # MongoDB connection logic
