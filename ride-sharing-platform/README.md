@@ -142,8 +142,8 @@ ride-sharing-platform/
 │   ├── Dockerfile                 # Docker config for user service
 │   ├── main.py                    # Entry point for user service
 │   ├── redis_cache.py             # Redis cache logic
-│   ├── services/
-│   │   └── mongodb.py             # MongoDB connection logic
+│   └── services/
+│       └── mongodb.py             # MongoDB connection logic
 │
 ├── docker-compose.yml             # Docker Compose configuration
 ├── README.md                      # Project documentation
