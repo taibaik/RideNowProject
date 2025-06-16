@@ -127,7 +127,7 @@ Ensure MongoDB and Redis are running locally or update their connection URIs in 
 ## 📁 Project Structure
 
 ```
-ride-sharing-platform/
+ridenowproject
 ├── ride-service/
 │   ├── main.py                    # Entry point for ride service
 │   ├── Dockerfile                 # Docker config for ride service
