@@ -130,6 +130,7 @@ Ensure MongoDB and Redis are running locally or update their connection URIs in 
 ride-sharing-platform/
 ├── ride-service/
 │   ├── main.py                    # Entry point for ride service
+│   ├── Dockerfile                 # Docker config for ride service
 │   ├── redis_cache.py             # Redis cache logic
 │   ├── services/
 │   │   └── mongodb.py             # MongoDB connection logic
@@ -139,7 +140,10 @@ ride-sharing-platform/
 │
 ├── user-service/
 │   ├── Dockerfile                 # Docker config for user service
-│   └── main.py                    # Entry point for user service
+│   ├── main.py                    # Entry point for user service
+│   ├── redis_cache.py             # Redis cache logic
+│   ├── services/
+│   │   └── mongodb.py             # MongoDB connection logic
 │
 ├── docker-compose.yml             # Docker Compose configuration
 ├── README.md                      # Project documentation
